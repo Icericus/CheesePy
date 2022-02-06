@@ -10,6 +10,8 @@ load_dotenv()
 token = os.environ.get("bot-token")
 userid = os.environ.get("userid")
 
+datafile = 'cheeselist.csv'
+
 description = '''A bot telling you the secrets of cheese...'''
 
 intents = discord.Intents.default()
@@ -26,7 +28,7 @@ def WrongIdError():
 def load_cheese():
     cheese_dict.clear()
     cheese_key_list.clear()
-    with open('cheeselist.csv', newline='', encoding="UTF-8") as cheese_list:
+    with open(datafile, newline='', encoding="UTF-8") as cheese_list:
         cheese_reader = csv.reader(cheese_list, delimiter=';', quotechar='"')
         for cheese in cheese_reader:
             if cheese[0] == "id":
@@ -61,11 +63,16 @@ async def heese(ctx):
     await ctx.send("Cheeeeese!")
 
 
+@bot.command(aliases=['invite','fork','github'])
+async def git(ctx):
+    await ctx.send("You want to use this bot on your own server?\nEither ask Icericus#3141 or get the code on https://github.com/Icericus/CheeseBot")
+
+
 @bot.command(aliases=['r'], description="Show a random cheese!")
 async def random(ctx):
     """(c!r) Shows a random cheese!"""
     cheese_entry = cheese_dict[rnd.choice(list(cheese_dict.keys()))]
-    print(cheese_entry)
+    print("Called random with: ",cheese_entry[0],"on server:",ctx.guild)
     cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
     cheese_embed.set_image(url=cheese_entry[2])
     cheese_embed.set_author(name=cheese_entry[1])
@@ -77,7 +84,7 @@ async def search(ctx, *, searchterm):
     """(c!s) Search for cheese, enter a keyword to find cheese."""
     if searchterm in cheese_key_list:
         cheese_entry = cheese_dict[searchterm]
-        print(cheese_entry)
+        print("Called search with: ",cheese_entry[0],"on server:",ctx.guild)
         cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
         cheese_embed.set_image(url=cheese_entry[2])
         cheese_embed.set_author(name=cheese_entry[1])
