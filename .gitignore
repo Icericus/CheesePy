@@ -1,0 +1,7 @@
+.idea/*
+.vscode/*
+cheeselist.csv
+cheeselist_old.csv
+Jupyter Crawler/*
+temp.py
+.env
