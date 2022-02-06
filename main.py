@@ -96,4 +96,39 @@ async def search(ctx, *, searchterm):
         await ctx.send("Nothing found...")
 
 
+@bot.command(aliases=['sn'],
+             description="Search for cheese but better (or broken),\nenter one or more keywords to find cheese.")
+async def searchnew(ctx, *searchterm):
+    """(c!sn) Search for cheese but better (or broken), enter a keyword to find cheese.
+    Idea: one search for every keyword"""
+    print(searchterm)
+    if searchterm[0] in cheese_key_list:
+        cheese_entry = cheese_dict[searchterm[0]]
+        print(cheese_entry)
+        cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
+        cheese_embed.set_image(url=cheese_entry[2])
+        cheese_embed.set_author(name=cheese_entry[1])
+        await ctx.send(embed=cheese_embed)
+
+    templist = cheese_key_list.copy()
+    for term in searchterm:
+        if any(term in cheese for cheese in cheese_key_list):
+            templist2 = []
+            for cheese in templist:
+                if term in cheese:
+                    templist2.append(cheese)
+                    print(cheese)
+            templist = templist2.copy()
+
+        if len(templist) == 1:
+            cheese_entry = cheese_dict[templist[0]]
+            print(cheese_entry)
+            cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
+            cheese_embed.set_image(url=cheese_entry[2])
+            cheese_embed.set_author(name=cheese_entry[1])
+            await ctx.send(embed=cheese_embed)
+
+    # TODO: add the code for showing search results
+
+
 bot.run(token)
