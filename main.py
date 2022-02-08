@@ -51,20 +51,21 @@ async def on_ready():
 @commands.is_owner()
 async def reload(ctx):
     """Reloads the cheese-list (dev only)"""
-    print("manual reload")
+    print("manual reload triggered in",ctx.guild)
     load_cheese()
     print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
     await ctx.send("Devbot: loaded " + str(len(cheese_dict)) + " kinds of cheese")
 
 
-@bot.command(description="Cheeeeese!")
-async def heese(ctx):
-    """Says Cheeeeese!"""
-    await ctx.send("Cheeeeese!")
+#@bot.command(description="Cheeeeese!")
+#async def heese(ctx):
+#    """Says Cheeeeese!"""
+#    await ctx.send("Cheeeeese!")
 
 
 @bot.command(aliases=['invite','fork','github'])
 async def git(ctx):
+    print("Called invite in: ",ctx.guild)
     await ctx.send("You want to use this bot on your own server?\nEither ask Icericus#3141 or get the code on https://github.com/Icericus/CheeseBot")
 
 
@@ -94,7 +95,7 @@ async def search(ctx, *, searchterm):
         for cheese in cheese_key_list:
             if searchterm in cheese:
                 search_list.append(cheese)
-                print(cheese)
+                #print(cheese)
         search_out = "\n".join(search_list)
         search_embed = discord.Embed(title="Search:",
                                      description="Choose one of these for more information:\n" + search_out)
