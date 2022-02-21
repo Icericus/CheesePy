@@ -18,7 +18,7 @@ intents = discord.Intents.default()
 cheese_dict = {}
 cheese_key_list = []
 
-bot = commands.Bot(command_prefix='c!', description=description, intents=intents, owner_id=userid)
+bot = commands.Bot(command_prefix='c!', description=description, intents=intents, owner_id=int(userid))
 
 
 def WrongIdError():
@@ -43,6 +43,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+    print('Bot owner is:',userid)
     load_cheese()
     print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
 
