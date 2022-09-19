@@ -1,8 +1,9 @@
 from tokenize import String
 import discord
-# from discord.ext import commands, tasks
+from discord.ext import tasks
 import random as rnd
 import csv
+import random as rndm
 import os
 from dotenv import load_dotenv
 
@@ -12,6 +13,7 @@ token = os.environ.get("bot-token")
 userid = os.environ.get("userid")
 
 datafile = 'cheeselist.csv'
+statusfile = 'statuslist.csv'
 
 description = '''A bot telling you the secrets of cheese...'''
 
@@ -38,6 +40,29 @@ def load_cheese():
             cheese_key_list.append(cheese[0])
 
 
+status_list = []
+
+def load_status():
+    status_list.clear()
+    with open(statusfile, newline='', encoding="UTF-8") as status_file:
+        status_reader = csv.reader(status_file, delimiter=';', quotechar='"')
+        for status in status_reader:
+            # print(status[0], status[1])
+            status_list.append((status[0], status[1]))
+
+
+@tasks.loop(minutes=5)
+async def statusChange():
+    status_output = rndm.choice(status_list)
+    print("changing status to ",status_output)
+    if status_output[0] == "p":
+        await bot.change_presence(activity=discord.Game(status_output[1]))
+    elif status_output[0] == "l":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=status_output[1]))
+    elif status_output[0] == "w":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status_output[1]))
+
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -47,6 +72,9 @@ async def on_ready():
     print('Bot owner is:',userid)
     load_cheese()
     print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
+    load_status()
+    print("loaded " + str(len(status_list)) + " different status messages")
+    statusChange.start()
 
 
 @bot.command(description="Reloads the cheese-list (dev only)")
@@ -57,7 +85,9 @@ async def reload(ctx):
         print("manual reload triggered in",ctx.guild)
         load_cheese()
         print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
-        await ctx.respond("Devbot: loaded " + str(len(cheese_dict)) + " kinds of cheese")
+        load_status()
+        print("loaded " + str(len(status_list)) + " different status messages")
+        await ctx.respond("Devbot: loaded " + str(len(cheese_dict)) + " kinds of cheese and " + str(len(status_list)) + " different status messages.")
     else:
         await ctx.respond("You're not a dev.")
 
