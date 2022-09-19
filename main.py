@@ -1,3 +1,4 @@
+from tokenize import String
 import discord
 # from discord.ext import commands, tasks
 import random as rnd
@@ -18,7 +19,7 @@ intents = discord.Intents.default()
 cheese_dict = {}
 cheese_key_list = []
 
-bot = discord.Bot(description=description, intents=intents, owner_id=int(userid), debug_guilds=[760700901593317416])
+bot = discord.Bot(description=description, intents=intents, owner_id=int(userid))
 
 
 def WrongIdError():
@@ -77,10 +78,10 @@ async def random(ctx):
 
 
 @bot.command(description="Search for cheese, enter a keyword to find cheese")
-async def search(ctx, *, searchterm):
+async def search(ctx, searchterm):
+    print("Called search with: ",searchterm,"on server:",ctx.guild)
     if searchterm in cheese_key_list:
         cheese_entry = cheese_dict[searchterm]
-        print("Called search with: ",cheese_entry[0],"on server:",ctx.guild)
         cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
         cheese_embed.set_image(url=cheese_entry[2])
         cheese_embed.set_author(name=cheese_entry[1])
