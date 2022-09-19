@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+# from discord.ext import commands, tasks
 import random as rnd
 import csv
 import os
@@ -18,7 +18,7 @@ intents = discord.Intents.default()
 cheese_dict = {}
 cheese_key_list = []
 
-bot = commands.Bot(command_prefix='c!', description=description, intents=intents, owner_id=int(userid))
+bot = discord.Bot(description=description, intents=intents, owner_id=int(userid), debug_guilds=[760700901593317416])
 
 
 def WrongIdError():
@@ -48,49 +48,43 @@ async def on_ready():
     print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
 
 
-@bot.command(aliases=['rl'])
-@commands.is_owner()
+@bot.command(description="Reloads the cheese-list (dev only)")
+# @bot.is_owner()
 async def reload(ctx):
-    """Reloads the cheese-list (dev only)"""
-    print("manual reload triggered in",ctx.guild)
-    load_cheese()
-    print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
-    await ctx.send("Devbot: loaded " + str(len(cheese_dict)) + " kinds of cheese")
+    if (await bot.is_owner(ctx.user)):
+        print("manual reload triggered in",ctx.guild)
+        load_cheese()
+        print("loaded " + str(len(cheese_dict)) + " kinds of cheese")
+        await ctx.respond("Devbot: loaded " + str(len(cheese_dict)) + " kinds of cheese")
+    else:
+        await ctx.respond("You're not a dev.")
 
 
-#@bot.command(description="Cheeeeese!")
-#async def heese(ctx):
-#    """Says Cheeeeese!"""
-#    await ctx.send("Cheeeeese!")
-
-
-@bot.command(aliases=['invite','fork','github'])
-async def git(ctx):
+@bot.command(description="Get all information on using this Bot for your own server!")
+async def invite(ctx):
     print("Called invite in: ",ctx.guild)
-    await ctx.send("You want to use this bot on your own server?\nEither ask Icericus#3141 or get the code on https://github.com/Icericus/CheeseBot")
+    await ctx.respond("You want to use this bot on your own server?\nEither ask Icericus#3141 or get the code on https://github.com/Icericus/CheeseBot")
 
 
-@bot.command(aliases=['r'], description="Show a random cheese!")
+@bot.command(description="Show a random cheese")
 async def random(ctx):
-    """(c!r) Shows a random cheese!"""
     cheese_entry = cheese_dict[rnd.choice(list(cheese_dict.keys()))]
     print("Called random with: ",cheese_entry[0],"on server:",ctx.guild)
     cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
     cheese_embed.set_image(url=cheese_entry[2])
     cheese_embed.set_author(name=cheese_entry[1])
-    await ctx.send(embed=cheese_embed)
+    await ctx.respond(embed=cheese_embed)
 
 
-@bot.command(aliases=['s'], description="Search for cheese, enter a keyword to find cheese.")
+@bot.command(description="Search for cheese, enter a keyword to find cheese")
 async def search(ctx, *, searchterm):
-    """(c!s) Search for cheese, enter a keyword to find cheese."""
     if searchterm in cheese_key_list:
         cheese_entry = cheese_dict[searchterm]
         print("Called search with: ",cheese_entry[0],"on server:",ctx.guild)
         cheese_embed = discord.Embed(title=cheese_entry[0], description=cheese_entry[4], url=cheese_entry[3])
         cheese_embed.set_image(url=cheese_entry[2])
         cheese_embed.set_author(name=cheese_entry[1])
-        await ctx.send(embed=cheese_embed)
+        await ctx.respond(embed=cheese_embed)
     elif any(searchterm in cheese for cheese in cheese_key_list):
         search_list = []
         for cheese in cheese_key_list:
@@ -100,9 +94,9 @@ async def search(ctx, *, searchterm):
         search_out = "\n".join(search_list)
         search_embed = discord.Embed(title="Search:",
                                      description="Choose one of these for more information:\n" + search_out)
-        await ctx.send(embed=search_embed)
+        await ctx.respond(embed=search_embed)
     else:
-        await ctx.send("Nothing found...")
+        await ctx.respond("Nothing found...")
 
 
 bot.run(token)
