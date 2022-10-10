@@ -3,7 +3,6 @@ import discord
 from discord.ext import tasks
 import random as rnd
 import csv
-import random as rndm
 import os
 from dotenv import load_dotenv
 
@@ -53,7 +52,7 @@ def load_status():
 
 @tasks.loop(minutes=5)
 async def statusChange():
-    status_output = rndm.choice(status_list)
+    status_output = rnd.choice(status_list)
     print("changing status to ",status_output)
     if status_output[0] == "p":
         await bot.change_presence(activity=discord.Game(status_output[1]))
