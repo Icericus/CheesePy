@@ -1,9 +1,9 @@
-# CheeseBot
+# CheesePy
 
 ## A discord bot about cheese
 
 Created this as a random project on the side while learning python.
-I wont hand out the cheeselist.csv or the crawler I used to create it because legal reasons.
+I wont hand out the cheeselist.csv or the crawler I used to create it because legal reasons. (am currently waiting on an answer from cheese.com)
 
 Update: Reworked the bot to work with Slash commands
 
